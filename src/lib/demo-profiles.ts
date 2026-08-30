@@ -74,7 +74,7 @@ const VERIFIED_DEMO: DemoProfile = {
       { id: "v1", kind: "web", label: "Matrix", value: "https://matrix.to/#/@jan:rout.be" },
       { id: "v2", kind: "web", label: "GitHub", value: "https://github.com/routbe" },
       { id: "v3", kind: "web", label: "Mastodon", value: "https://mastodon.social/@jdelplanche" },
-      { id: "v4", kind: "vcard", label: "Contact opslaan (vCard)", value: "" },
+      { id: "v4", kind: "email", label: "Contact opslaan", value: "jan@rout.be" },
     ],
   },
 };
