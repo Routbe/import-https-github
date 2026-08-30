@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { getPublicProfileByHandle } from "@/lib/studio-profile.functions";
 import type { ProfileBlock, ProfileRecord } from "@/lib/profile";
+import { findDemoProfile } from "@/lib/demo-profiles";
 
 type Row = Record<string, unknown> & { blocks?: unknown };
 
