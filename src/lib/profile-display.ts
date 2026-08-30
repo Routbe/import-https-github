@@ -39,6 +39,17 @@ export {
 export type { VisitEffect } from "./visit-effects";
 export { VISIT_EFFECTS, runVisitEffect } from "./visit-effects";
 export type BannerStyle = "none" | "gradient" | "image";
+/** Richting van het kleurverloop in de banner (of radiaal vanuit het midden). */
+export type BannerDirection =
+  | "to right"
+  | "to left"
+  | "to bottom"
+  | "to top"
+  | "to bottom right"
+  | "to bottom left"
+  | "to top right"
+  | "to top left"
+  | "radial";
 export type NameAccent = "classic" | "gold" | "neon" | "chrome";
 
 export interface ProfileDisplayPrefs {
