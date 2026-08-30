@@ -70,7 +70,8 @@ export interface ProfileDisplayPrefs {
   bannerTo: string | null;
   /** Vanwaar het verloop start. */
   bannerDirection: BannerDirection;
-
+  /** Overschrijft de themakleur van het canvas / het patroonaccent. */
+  canvasColor: string | null;
   patternColor: string | null;
   /** Korte statuslijn onder de handle ("Strategic Architect"). */
   statusLine: string | null;
