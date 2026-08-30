@@ -139,6 +139,19 @@ export const BANNER_STYLES: { id: BannerStyle; label: string }[] = [
   { id: "image", label: "Eigen afbeelding" },
 ];
 
+/** Richtingen voor het bannerverloop — het pijltje toont waar het naartoe loopt. */
+export const BANNER_DIRECTIONS: { id: BannerDirection; label: string }[] = [
+  { id: "to right", label: "→ Naar rechts" },
+  { id: "to left", label: "← Naar links" },
+  { id: "to bottom", label: "↓ Naar onder" },
+  { id: "to top", label: "↑ Naar boven" },
+  { id: "to bottom right", label: "↘ Linksboven → rechtsonder" },
+  { id: "to bottom left", label: "↙ Rechtsboven → linksonder" },
+  { id: "to top right", label: "↗ Linksonder → rechtsboven" },
+  { id: "to top left", label: "↖ Rechtsonder → linksboven" },
+  { id: "radial", label: "◎ Radiaal uit het midden" },
+];
+
 export const NAME_ACCENTS: { id: NameAccent; label: string }[] = [
   { id: "classic", label: "Klassiek crème" },
   { id: "gold", label: "Goud verloop" },
