@@ -68,8 +68,9 @@ export interface ProfileDisplayPrefs {
   /** Kleurenpaar voor de gradient-banner. */
   bannerFrom: string | null;
   bannerTo: string | null;
-  /** Overschrijft de themakleur van het canvas / het patroonaccent. */
-  canvasColor: string | null;
+  /** Vanwaar het verloop start. */
+  bannerDirection: BannerDirection;
+
   patternColor: string | null;
   /** Korte statuslijn onder de handle ("Strategic Architect"). */
   statusLine: string | null;
