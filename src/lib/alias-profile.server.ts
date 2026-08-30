@@ -49,7 +49,45 @@ function toAliasProfile(row: Row): AliasProfile {
   };
 }
 
+/**
+ * Zorgt dat `public.alias_profiles` bestaat (migratie 38). Zo lukt het aanmaken
+ * van een eigen profielpagina ook op databases waar de migratie nog niet is
+ * uitgevoerd — anders faalde het opslaan met "relation does not exist".
+ */
+let tableReady: Promise<void> | null = null;
+async function ensureAliasTable(): Promise<void> {
+  tableReady ??= (async () => {
+    await sql`
+      create table if not exists public.alias_profiles (
+        user_id        uuid primary key references public.profiles(id) on delete cascade,
+        handle         text not null,
+        display_name   text,
+        tagline        text,
+        bio            text,
+        avatar_url     text,
+        favicon_url    text,
+        theme          text not null default 'noir',
+        card_style     text not null default 'bordered',
+        blocks         jsonb not null default '[]'::jsonb,
+        display_prefs  jsonb not null default '{}'::jsonb,
+        enabled        boolean not null default true,
+        created_at     timestamptz not null default now(),
+        updated_at     timestamptz not null default now()
+      )
+    `;
+    await sql`
+      create unique index if not exists alias_profiles_handle_ci_key
+        on public.alias_profiles (lower(handle))
+    `;
+  })().catch((error) => {
+    tableReady = null;
+    throw error;
+  });
+  return tableReady;
+}
+
 export async function readAliasProfile(userId: string): Promise<AliasProfile | null> {
+  await ensureAliasTable();
   const rows = (await sql`
     select handle, display_name, tagline, avatar_url, favicon_url, theme, card_style,
            blocks, display_prefs, enabled
