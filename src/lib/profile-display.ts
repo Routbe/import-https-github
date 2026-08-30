@@ -285,7 +285,13 @@ export function bannerStyleOf(
   if (prefs.bannerStyle === "gradient") {
     const from = prefs.bannerFrom ?? accent;
     const to = prefs.bannerTo ?? theme.card;
-    return { backgroundImage: `linear-gradient(120deg, ${from}, ${to})` };
+    const dir = prefs.bannerDirection;
+    return {
+      backgroundImage:
+        dir === "radial"
+          ? `radial-gradient(circle at 50% 50%, ${from}, ${to})`
+          : `linear-gradient(${dir}, ${from}, ${to})`,
+    };
   }
   return null;
 }
