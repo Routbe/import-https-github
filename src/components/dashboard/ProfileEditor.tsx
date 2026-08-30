@@ -1162,6 +1162,27 @@ export function ProfileEditor({ variant = "verified" }: { variant?: ProfileVaria
                 </AccordionContent>
               </AccordionItem>
 
+              {/* Favorieten horen bij je links: film, serie, boek, muziek … */}
+              <AccordionItem
+                value="favorites"
+                className="rounded-2xl border border-border bg-card px-4 sm:px-5"
+              >
+                <AccordionTrigger className="hover:no-underline">
+                  <span className="flex flex-1 items-center justify-between gap-3 pr-2">
+                    <span className="text-base font-medium">⭐ Favorieten</span>
+                    <span className="rounded-full border border-border px-2 py-0.5 text-[10px] text-muted-foreground">
+                      {prefs.favorites.length}/{MAX_FAVORITES}
+                    </span>
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent className="space-y-4 pb-5">
+                  <FavoritesEditor
+                    value={prefs.favorites}
+                    onChange={(next) => setPref("favorites", next)}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+
               <AccordionItem
                 value="conversion_tips"
                 className="rounded-2xl border border-border bg-card px-4 sm:px-5"
