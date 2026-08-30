@@ -1722,6 +1722,60 @@ export function ProfileEditor({ variant = "verified" }: { variant?: ProfileVaria
                 )}
               </div>
 
+              {/* Zelfde data als tabel — bij geen data toch één lege regel. */}
+              <div className="overflow-hidden rounded-xl border border-border">
+                <div className="flex items-center justify-between border-b border-border px-3 py-2">
+                  <p className="text-xs font-medium text-muted-foreground">Traffic trend (tabel)</p>
+                  <p className="text-[10px] text-muted-foreground">
+                    {(series ?? []).reduce((sum, r) => sum + r.scans, 0)} totaal
+                  </p>
+                </div>
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="border-b border-border text-[10px] uppercase tracking-wide text-muted-foreground">
+                      <th className="px-3 py-2 text-left font-medium">Datum</th>
+                      <th className="px-3 py-2 text-right font-medium">Scans &amp; views</th>
+                      <th className="px-3 py-2 text-left font-medium">Verdeling</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(series ?? []).length === 0 ? (
+                      <tr>
+                        <td className="px-3 py-2.5 text-muted-foreground">—</td>
+                        <td className="px-3 py-2.5 text-right text-muted-foreground">0</td>
+                        <td className="px-3 py-2.5">
+                          <div className="h-1.5 w-full rounded-full bg-muted" />
+                        </td>
+                      </tr>
+                    ) : (
+                      (series ?? []).map((row) => {
+                        const peak = Math.max(1, ...(series ?? []).map((r) => r.scans));
+                        return (
+                          <tr key={row.date} className="border-t border-border/60">
+                            <td className="px-3 py-2 text-muted-foreground">{row.date}</td>
+                            <td className="px-3 py-2 text-right font-medium tabular-nums">
+                              {row.scans}
+                            </td>
+                            <td className="px-3 py-2">
+                              <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                                <div
+                                  className="h-full rounded-full bg-foreground"
+                                  style={{
+                                    width: `${row.scans === 0 ? 0 : Math.max(4, (row.scans / peak) * 100)}%`,
+                                  }}
+                                />
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+
+
               <div className="rounded-xl border border-border p-3">
                 <p className="mb-2 text-xs font-medium text-muted-foreground">
                   Top Clicked Components
