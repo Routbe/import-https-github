@@ -60,7 +60,10 @@ export function ProfileShowcase() {
   const [showQr, setShowQr] = useState(false);
   const item = SHOWCASES[active]!;
   const t = dark ? item.dark : item.light;
-  const url = `https://rout.be/${item.path}`;
+  // Beide tiers hebben een echte, aparte voorbeeldpagina in deze app; in de
+  // preview-omgeving openen we die op dezelfde origin zodat de link werkt.
+  const origin = typeof window === "undefined" ? "https://rout.be" : window.location.origin;
+  const url = `${origin}/${item.path}`;
 
   const qr = useMemo(
     () =>
