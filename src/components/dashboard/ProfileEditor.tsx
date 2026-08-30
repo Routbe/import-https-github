@@ -1546,28 +1546,63 @@ export function ProfileEditor({ variant = "verified" }: { variant?: ProfileVaria
                     ))}
                   </div>
                   {prefs.bannerStyle === "gradient" && (
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      <div className="space-y-1.5">
-                        <p className="input-label">Van</p>
-                        <input
-                          type="color"
-                          aria-label="Bannerkleur van"
-                          value={prefs.bannerFrom ?? "#1a1a1a"}
-                          onChange={(e) => setPref("bannerFrom", e.target.value)}
-                          className="h-10 w-full cursor-pointer rounded-lg border border-border bg-transparent p-1"
-                        />
+                    <>
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        <div className="space-y-1.5">
+                          <p className="input-label">Van</p>
+                          <input
+                            type="color"
+                            aria-label="Bannerkleur van"
+                            value={prefs.bannerFrom ?? "#1a1a1a"}
+                            onChange={(e) => setPref("bannerFrom", e.target.value)}
+                            className="h-10 w-full cursor-pointer rounded-lg border border-border bg-transparent p-1"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <p className="input-label">Naar</p>
+                          <input
+                            type="color"
+                            aria-label="Bannerkleur naar"
+                            value={prefs.bannerTo ?? "#c9a84c"}
+                            onChange={(e) => setPref("bannerTo", e.target.value)}
+                            className="h-10 w-full cursor-pointer rounded-lg border border-border bg-transparent p-1"
+                          />
+                        </div>
                       </div>
-                      <div className="space-y-1.5">
-                        <p className="input-label">Naar</p>
-                        <input
-                          type="color"
-                          aria-label="Bannerkleur naar"
-                          value={prefs.bannerTo ?? "#c9a84c"}
-                          onChange={(e) => setPref("bannerTo", e.target.value)}
-                          className="h-10 w-full cursor-pointer rounded-lg border border-border bg-transparent p-1"
-                        />
+                      <p className="input-label pt-2">Richting van het verloop</p>
+                      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                        {BANNER_DIRECTIONS.map((d) => {
+                          const from = prefs.bannerFrom ?? "#1a1a1a";
+                          const to = prefs.bannerTo ?? "#c9a84c";
+                          return (
+                            <button
+                              key={d.id}
+                              type="button"
+                              aria-pressed={prefs.bannerDirection === d.id}
+                              onClick={() => setPref("bannerDirection", d.id)}
+                              className={cn(
+                                "flex items-center gap-2 rounded-xl border p-2 text-left text-[11px] font-medium transition-colors",
+                                prefs.bannerDirection === d.id
+                                  ? "border-primary/50 bg-primary/10"
+                                  : "border-border",
+                              )}
+                            >
+                              <span
+                                aria-hidden
+                                className="h-7 w-10 shrink-0 rounded-md border border-border"
+                                style={{
+                                  backgroundImage:
+                                    d.id === "radial"
+                                      ? `radial-gradient(circle at 50% 50%, ${from}, ${to})`
+                                      : `linear-gradient(${d.id}, ${from}, ${to})`,
+                                }}
+                              />
+                              <span className="truncate">{d.label}</span>
+                            </button>
+                          );
+                        })}
                       </div>
-                    </div>
+                    </>
                   )}
                   {prefs.bannerStyle === "image" && (
                     <div className="space-y-1.5">
