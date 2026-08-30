@@ -120,6 +120,11 @@ import {
   getStudioProfile,
   saveStudioProfile,
 } from "@/lib/studio-profile.functions";
+import {
+  checkAliasHandle,
+  getAliasProfile,
+  saveAliasProfile,
+} from "@/lib/alias-profile.functions";
 import { SubdomainPanel } from "@/components/dashboard/SubdomainPanel";
 import { BadgesPanel } from "@/components/dashboard/BadgesPanel";
 import { SocialVerifyPanel } from "@/components/dashboard/SocialVerifyPanel";
@@ -205,18 +210,23 @@ function inputHint(kind: string): { prefix?: string; help: string } {
   }
 }
 
+export type ProfileVariant = "verified" | "alias";
+
 /**
  * ROUT Studio — the creator workspace for the public Profile Hub.
  * Four fixed tabs (links, design, analytics, settings) with a live mobile
  * preview alongside, fully decoupled from the QR generator.
  */
-export function ProfileEditor() {
+export function ProfileEditor({ variant = "verified" }: { variant?: ProfileVariant } = {}) {
   const { user } = useAuth();
   const { style: rawUrlStyle, save: saveUrlStylePref } = useUrlStyle();
 
-  const loadProfileEditor = useServerFn(getStudioProfile);
-  const checkHandle = useServerFn(checkStudioHandle);
-  const saveProfile = useServerFn(saveStudioProfile);
+  // Het aliasprofiel (`/u/<handle>`) en het rootprofiel zijn aparte records met
+  // eigen handle, thema en blokken; alleen de RPC-laag verschilt.
+  const alias = variant === "alias";
+  const loadProfileEditor = useServerFn(alias ? getAliasProfile : getStudioProfile);
+  const checkHandle = useServerFn(alias ? checkAliasHandle : checkStudioHandle);
+  const saveProfile = useServerFn(alias ? saveAliasProfile : saveStudioProfile);
   const loadAnalytics = useServerFn(getStudioAnalytics);
   const [tab, setTab] = useState<StudioTab>("links");
   const [loading, setLoading] = useState(true);
@@ -383,7 +393,7 @@ export function ProfileEditor() {
   const handleProblem = normalized ? handleIssue(normalized, handleCtx) : null;
   const handleOk = isValidHandle(normalized) && !reserved && !handleProblem;
   // Volg de actieve identiteitsruimte; schone root-URLs blijven Pro-only.
-  const urlStyle = effectiveUrlStyle(
+  const urlStyle = alias ? "u" : effectiveUrlStyle(
     identitySpace === "verified" ? "clean" : rawUrlStyle === "clean" || rawUrlStyle === "clean_at" ? "u" : rawUrlStyle,
     verified,
   );
