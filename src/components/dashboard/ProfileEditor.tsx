@@ -63,6 +63,7 @@ import {
   BACKGROUND_STYLES,
   BADGE_NAME_FORMATS,
   BADGE_TYPES,
+  BANNER_DIRECTIONS,
   BANNER_STYLES,
   DEFAULT_DISPLAY_PREFS,
   NAME_ACCENTS,
@@ -1161,6 +1162,27 @@ export function ProfileEditor({ variant = "verified" }: { variant?: ProfileVaria
                 </AccordionContent>
               </AccordionItem>
 
+              {/* Favorieten horen bij je links: film, serie, boek, muziek … */}
+              <AccordionItem
+                value="favorites"
+                className="rounded-2xl border border-border bg-card px-4 sm:px-5"
+              >
+                <AccordionTrigger className="hover:no-underline">
+                  <span className="flex flex-1 items-center justify-between gap-3 pr-2">
+                    <span className="text-base font-medium">⭐ Favorieten</span>
+                    <span className="rounded-full border border-border px-2 py-0.5 text-[10px] text-muted-foreground">
+                      {prefs.favorites.length}/{MAX_FAVORITES}
+                    </span>
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent className="space-y-4 pb-5">
+                  <FavoritesEditor
+                    value={prefs.favorites}
+                    onChange={(next) => setPref("favorites", next)}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+
               <AccordionItem
                 value="conversion_tips"
                 className="rounded-2xl border border-border bg-card px-4 sm:px-5"
@@ -1545,28 +1567,63 @@ export function ProfileEditor({ variant = "verified" }: { variant?: ProfileVaria
                     ))}
                   </div>
                   {prefs.bannerStyle === "gradient" && (
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      <div className="space-y-1.5">
-                        <p className="input-label">Van</p>
-                        <input
-                          type="color"
-                          aria-label="Bannerkleur van"
-                          value={prefs.bannerFrom ?? "#1a1a1a"}
-                          onChange={(e) => setPref("bannerFrom", e.target.value)}
-                          className="h-10 w-full cursor-pointer rounded-lg border border-border bg-transparent p-1"
-                        />
+                    <>
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        <div className="space-y-1.5">
+                          <p className="input-label">Van</p>
+                          <input
+                            type="color"
+                            aria-label="Bannerkleur van"
+                            value={prefs.bannerFrom ?? "#1a1a1a"}
+                            onChange={(e) => setPref("bannerFrom", e.target.value)}
+                            className="h-10 w-full cursor-pointer rounded-lg border border-border bg-transparent p-1"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <p className="input-label">Naar</p>
+                          <input
+                            type="color"
+                            aria-label="Bannerkleur naar"
+                            value={prefs.bannerTo ?? "#c9a84c"}
+                            onChange={(e) => setPref("bannerTo", e.target.value)}
+                            className="h-10 w-full cursor-pointer rounded-lg border border-border bg-transparent p-1"
+                          />
+                        </div>
                       </div>
-                      <div className="space-y-1.5">
-                        <p className="input-label">Naar</p>
-                        <input
-                          type="color"
-                          aria-label="Bannerkleur naar"
-                          value={prefs.bannerTo ?? "#c9a84c"}
-                          onChange={(e) => setPref("bannerTo", e.target.value)}
-                          className="h-10 w-full cursor-pointer rounded-lg border border-border bg-transparent p-1"
-                        />
+                      <p className="input-label pt-2">Richting van het verloop</p>
+                      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                        {BANNER_DIRECTIONS.map((d) => {
+                          const from = prefs.bannerFrom ?? "#1a1a1a";
+                          const to = prefs.bannerTo ?? "#c9a84c";
+                          return (
+                            <button
+                              key={d.id}
+                              type="button"
+                              aria-pressed={prefs.bannerDirection === d.id}
+                              onClick={() => setPref("bannerDirection", d.id)}
+                              className={cn(
+                                "flex items-center gap-2 rounded-xl border p-2 text-left text-[11px] font-medium transition-colors",
+                                prefs.bannerDirection === d.id
+                                  ? "border-primary/50 bg-primary/10"
+                                  : "border-border",
+                              )}
+                            >
+                              <span
+                                aria-hidden
+                                className="h-7 w-10 shrink-0 rounded-md border border-border"
+                                style={{
+                                  backgroundImage:
+                                    d.id === "radial"
+                                      ? `radial-gradient(circle at 50% 50%, ${from}, ${to})`
+                                      : `linear-gradient(${d.id}, ${from}, ${to})`,
+                                }}
+                              />
+                              <span className="truncate">{d.label}</span>
+                            </button>
+                          );
+                        })}
                       </div>
-                    </div>
+                    </>
                   )}
                   {prefs.bannerStyle === "image" && (
                     <div className="space-y-1.5">
@@ -1580,27 +1637,6 @@ export function ProfileEditor({ variant = "verified" }: { variant?: ProfileVaria
                       />
                     </div>
                   )}
-                </AccordionContent>
-              </AccordionItem>
-
-              {/* 5 — Favorieten: films, series & boeken */}
-              <AccordionItem
-                value="favorites"
-                className="rounded-2xl border border-border bg-card px-4 sm:px-5"
-              >
-                <AccordionTrigger className="hover:no-underline">
-                  <span className="flex flex-1 items-center justify-between gap-3 pr-2">
-                    <span className="text-base font-medium">⭐ Favorieten</span>
-                    <span className="rounded-full border border-border px-2 py-0.5 text-[10px] text-muted-foreground">
-                      {prefs.favorites.length}/{MAX_FAVORITES}
-                    </span>
-                  </span>
-                </AccordionTrigger>
-                <AccordionContent className="space-y-4 pb-5">
-                  <FavoritesEditor
-                    value={prefs.favorites}
-                    onChange={(next) => setPref("favorites", next)}
-                  />
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
@@ -1685,6 +1721,60 @@ export function ProfileEditor({ variant = "verified" }: { variant?: ProfileVaria
                   </div>
                 )}
               </div>
+
+              {/* Zelfde data als tabel — bij geen data toch één lege regel. */}
+              <div className="overflow-hidden rounded-xl border border-border">
+                <div className="flex items-center justify-between border-b border-border px-3 py-2">
+                  <p className="text-xs font-medium text-muted-foreground">Traffic trend (tabel)</p>
+                  <p className="text-[10px] text-muted-foreground">
+                    {(series ?? []).reduce((sum, r) => sum + r.scans, 0)} totaal
+                  </p>
+                </div>
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="border-b border-border text-[10px] uppercase tracking-wide text-muted-foreground">
+                      <th className="px-3 py-2 text-left font-medium">Datum</th>
+                      <th className="px-3 py-2 text-right font-medium">Scans &amp; views</th>
+                      <th className="px-3 py-2 text-left font-medium">Verdeling</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(series ?? []).length === 0 ? (
+                      <tr>
+                        <td className="px-3 py-2.5 text-muted-foreground">—</td>
+                        <td className="px-3 py-2.5 text-right text-muted-foreground">0</td>
+                        <td className="px-3 py-2.5">
+                          <div className="h-1.5 w-full rounded-full bg-muted" />
+                        </td>
+                      </tr>
+                    ) : (
+                      (series ?? []).map((row) => {
+                        const peak = Math.max(1, ...(series ?? []).map((r) => r.scans));
+                        return (
+                          <tr key={row.date} className="border-t border-border/60">
+                            <td className="px-3 py-2 text-muted-foreground">{row.date}</td>
+                            <td className="px-3 py-2 text-right font-medium tabular-nums">
+                              {row.scans}
+                            </td>
+                            <td className="px-3 py-2">
+                              <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                                <div
+                                  className="h-full rounded-full bg-foreground"
+                                  style={{
+                                    width: `${row.scans === 0 ? 0 : Math.max(4, (row.scans / peak) * 100)}%`,
+                                  }}
+                                />
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+
 
               <div className="rounded-xl border border-border p-3">
                 <p className="mb-2 text-xs font-medium text-muted-foreground">
