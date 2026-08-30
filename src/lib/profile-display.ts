@@ -112,6 +112,7 @@ export const DEFAULT_DISPLAY_PREFS: ProfileDisplayPrefs = {
   bannerImageUrl: null,
   bannerFrom: null,
   bannerTo: null,
+  bannerDirection: "to bottom right",
   canvasColor: null,
   patternColor: null,
   statusLine: null,
