@@ -34,18 +34,21 @@ function withTimeout<T>(promise: PromiseLike<T>, ms: number, label: string): Pro
  * set when the lookup itself failed, so the page never shows a false
  * "still available" state — and never spins forever.
  */
-export function useProfileRecord(username: string) {
+export function useProfileRecord(username: string, options?: { free?: boolean }) {
   const [profile, setProfile] = useState<ProfileRecord | null>(null);
   const [suspended, setSuspended] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
+  const free = options?.free;
 
   const retry = useCallback(() => setAttempt((n) => n + 1), []);
 
   useEffect(() => {
     let cancelled = false;
     const handle = username.toLowerCase();
+    // Ingebouwde voorbeeldprofielen (landingspagina-vitrine) bestaan altijd.
+    const demo = findDemoProfile(handle, free);
 
     (async () => {
       setLoading(true);
@@ -61,9 +64,14 @@ export function useProfileRecord(username: string) {
       } catch (err) {
         if (cancelled) return;
         console.error("[profile:lookup]", handle, err);
-        setProfile(null);
         setSuspended(false);
-        setError(err instanceof Error ? err.message : "Profile lookup is unavailable");
+        if (demo) {
+          setProfile(demo.record);
+          setError(null);
+        } else {
+          setProfile(null);
+          setError(err instanceof Error ? err.message : "Profile lookup is unavailable");
+        }
         setLoading(false);
         return;
       }
@@ -77,7 +85,7 @@ export function useProfileRecord(username: string) {
               ...row,
               blocks: Array.isArray(row.blocks) ? (row.blocks as unknown as ProfileBlock[]) : [],
             } as unknown as ProfileRecord)
-          : null,
+          : (demo?.record ?? null),
       );
       setLoading(false);
     })();
@@ -85,7 +93,8 @@ export function useProfileRecord(username: string) {
     return () => {
       cancelled = true;
     };
-  }, [username, attempt]);
+  }, [username, attempt, free]);
+
 
   return { profile, suspended, loading, error, retry };
 }
